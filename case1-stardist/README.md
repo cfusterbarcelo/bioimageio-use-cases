@@ -5,21 +5,24 @@ This model is applied to the [Lizard dataset](https://www.kaggle.com/datasets/aa
 
 ## Apply stardist model in QuPath and correct segmentation
 
-We apply the pretrained model in QuPath, that has advanced image annotation capabilities. This allows correction of the stardist segmentation, for example for a more correct analysis of the result, or for training of a better model.
+We apply the pretrained model in QuPath, that has advanced image annotation capabilities.
+This allows correction of the stardist segmentation, for example for a more correct analysis of the result, or for training of a better model.
 
 Step-by-step:
-- Download the stardist model with `download_stardist_model.py`
-- Run `prepare_data_for_qupath.py` to select the data for QuPath
+- Download the stardist H&E model from: https://github.com/stardist/stardist-models/releases/download/v0.1/python_2D_versatile_he.zip
+- Download the images from https://www.kaggle.com/datasets/aadimator/lizard-dataset
+  You can download the entire dataset (~800MB) or just a few images.
 - Prepare QuPath for running StarDist:
-  - install the StarDist extension: https://qupath.readthedocs.io/en/stable/docs/advanced/stardist.html#getting-the-stardist-extension
-  - install the tensorflow extension: https://qupath.readthedocs.io/en/stable/docs/advanced/stardist.html#use-tensorflow
+  - install the StarDist and Deep Java Library extensions: https://qupath.readthedocs.io/en/stable/docs/intro/extensions.html#extensions
+  - install TensorFlow (and possibly CUDA): https://qupath.readthedocs.io/en/latest/docs/deep/djl.html
 - Apply stardist to the lizard images with the `apply_stardist_qupath.groovy` script using the [QuPath scripting functionality](https://qupath.readthedocs.io/en/stable/docs/scripting/workflows_to_scripts.html#running-a-script-for-a-single-image). 
-  - To run it adapt the path to the model in the script here: https://github.com/bioimage-io/use-cases/blob/main/case2/apply_stardist_qupath.groovy#L27
+  - To run it adapt the path to the model in the script here: https://github.com/bioimage-io/use-cases/blob/main/case1-stardist/apply_stardist_qupath.groovy#L26
 - Correct the predictions using the qupath annotation functionality (check out [these tweets](https://twitter.com/petebankhead/status/1295965136646176768) for a short overview of this functionality)
 - Export the label image using the `export_labels_qupath.groovy` script.
+  - You will need to set the path here: https://github.com/bioimage-io/use-cases/blob/main/case1-stardist/export_labels_qupath.groovy#L12
   - Important: Remove the rectangular annotation that the stardist plugin creates around the whole image before exporting the labels, otherwise the export script will not work correctly.
 
-See a short video demonstrating the label correction in qu-path:
+See a short video demonstrating the label correction in QuPath:
 
 https://user-images.githubusercontent.com/4263537/160414686-10ae46ae-5903-4a67-a35b-1f043b68711d.mp4
 
@@ -30,7 +33,7 @@ And images of application in QuPath:
 
 ### Dependencies
 
-- qupath 0.3.2
+- qupath 0.6.0
 
 ## Apply the model in deepImageJ
 
