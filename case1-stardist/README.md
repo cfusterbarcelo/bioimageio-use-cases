@@ -14,14 +14,15 @@ Step-by-step:
 - Download the images from https://www.kaggle.com/datasets/aadimator/lizard-dataset
   You can download the entire dataset (~800MB) or just a few images.
 - Prepare QuPath for running StarDist:
-  - install the StarDist and Deep Java Library extensions: https://qupath.readthedocs.io/en/stable/docs/intro/extensions.html#extensions
-  - install TensorFlow (and possibly CUDA): https://qupath.readthedocs.io/en/latest/docs/deep/djl.html
-- Apply stardist to the lizard images with the `apply_stardist_qupath.groovy` script using the [QuPath scripting functionality](https://qupath.readthedocs.io/en/stable/docs/scripting/workflows_to_scripts.html#running-a-script-for-a-single-image). 
-  - To run it adapt the path to the model in the script here: https://github.com/bioimage-io/use-cases/blob/main/case1-stardist/apply_stardist_qupath.groovy#L26
+  - install the StarDist extension: https://qupath.readthedocs.io/en/0.6/docs/intro/extensions.html#extensions
+  - install TensorFlow (and possibly CUDA): https://qupath.readthedocs.io/en/0.6/docs/deep/djl.html
+- Create a project: https://qupath.readthedocs.io/en/0.6/docs/tutorials/projects.html
+- Add the lizard images to the project: https://qupath.readthedocs.io/en/0.6/docs/tutorials/projects.html#add-images
+- Apply stardist to the lizard images with the `QuPath_Run_StarDist.groovy` script using the [QuPath scripting functionality](https://qupath.readthedocs.io/en/0.6/docs/scripting/workflows_to_scripts.html#running-a-script-for-multiple-images). 
+  - To run it adapt the path to the model in the script here: https://github.com/bioimage-io/use-cases/blob/main/case1-stardist/QuPath_Run_StarDist.groovy
 - Correct the predictions using the qupath annotation functionality (check out [these tweets](https://twitter.com/petebankhead/status/1295965136646176768) for a short overview of this functionality)
-- Export the label image using the `export_labels_qupath.groovy` script.
-  - You will need to set the path here: https://github.com/bioimage-io/use-cases/blob/main/case1-stardist/export_labels_qupath.groovy#L12
-  - Important: Remove the rectangular annotation that the stardist plugin creates around the whole image before exporting the labels, otherwise the export script will not work correctly.
+- Export the label image using the `QuPath_Export_Labels.groovy` script.
+
 
 See a short video demonstrating the label correction in QuPath:
 
