@@ -9,7 +9,8 @@ We apply the pretrained model in QuPath, that has advanced image annotation capa
 This allows correction of the stardist segmentation, for example for a more correct analysis of the result, or for training of a better model.
 
 Step-by-step:
-- Download the stardist H&E model from: https://github.com/stardist/stardist-models/releases/download/v0.1/python_2D_versatile_he.zip
+- Download the stardist H&E model from: https://bioimage.io/#/artifacts/chatty-frog  
+  Be sure to extract the downloaded zip, and also extract the TF_SavedModel folder inside the extracted folder.
 - Download the images from https://www.kaggle.com/datasets/aadimator/lizard-dataset
   You can download the entire dataset (~800MB) or just a few images.
 - Prepare QuPath for running StarDist:

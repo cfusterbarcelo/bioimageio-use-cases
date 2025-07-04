@@ -23,7 +23,7 @@ import qupath.opencv.tools.OpenCVTools
 setPixelSizeMicrons(0.5, 0.5)
 
 // specify the path to the model
-var pathModel = '/home/alan/Documents/github/imaging/use-cases/case1-stardist/stardist-hne-nuclei-segmentation_tensorflow_saved_model_bundle'
+var pathModel = '/home/alan/Documents/github/imaging/use-cases/case1-stardist/chatty-frog/'
 
 String normalizationType = "percentile" // whether to use percentile normalization, alternatively "zeroMeanUnitVariance"
 double minPercentile = 1.0
