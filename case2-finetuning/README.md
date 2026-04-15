@@ -1,8 +1,139 @@
 # Use-case 2: 3D U-Net for cell-segmentation in light microscopy
 
-## Initial Training in ZeroCost
+## Initial training in ZeroCost (option A) or BiaPy (option B)
+
+### Option A) ZeroCost
 
 TODO: describe training in zerocost (@esgomezm)
+
+
+### Option B) BiaPy
+
+To begin the initial training using [BiaPy](https://biapyx.github.io/), you will need to follow the steps outlined below. In this tutorial, we will run a **semantic segmentation workflow with BiaPy** through the command line. We chose this option because the dataset used in this tutorial is relatively large, and running on Colab may lead to **memory limitations** or **restricted training time**. Using the command line ensures more flexibility and avoids these issues.
+
+---
+
+## Prerequisites
+- Install [BiaPy](https://biapy.readthedocs.io/en/latest/installation.html) on your system using either `conda` or `pip`. We strongly recommend installing the **latest stable version**, as all releases are backwards-compatible with previous ones. For a smoother experience and to avoid package conflicts with other projects, create a **dedicated environment** for BiaPy:  
+  - [Conda environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) (recommended for most users)  
+  - [Python virtual environments (venv)](https://docs.python.org/3/library/venv.html) (lightweight alternative)  
+ 
+- Download the dataset provided in this tutorial and unzip it.  
+- Ensure your GPU drivers and CUDA environment (if using GPU) are correctly configured. You can verify it as follows:
+
+  ```
+  python -c 'import torch; print(torch.__version__)'
+  >>> 2.4.0
+  python -c 'import torch; print(torch.cuda.is_available())'
+  >>> True 
+  ```
+---
+
+## Step 1: Download the Configuration File
+We provide a prepared YAML configuration file as a template. Download it from the following link:  
+
+👉 [Download ovules.yaml](https://drive.google.com/file/d/1oyDCqtVHsTri9bgJ-LU8OyPRSLz4L4UF/view?usp=sharing)  
+
+Save it to your working directory (e.g., `~/biapy_project/config.yaml`).  
+
+---
+
+## Step 2: Update the Configuration File
+Open the `ovules.yaml` file in your favorite text editor and update the following fields:
+
+### Dataset paths
+Set the dataset paths to your local data folders:
+- `DATA.TRAIN.PATH` → raw training images  
+- `DATA.TRAIN.GT_PATH` → training ground-truth (boundaries)  
+- `DATA.VAL.PATH` → validation images  
+- `DATA.VAL.GT_PATH` → validation ground-truth  
+- `DATA.TEST.PATH` → test images  
+- `DATA.TEST.GT_PATH` → test ground-truth  
+
+Example:
+```yaml
+DATA:
+  TRAIN:
+    PATH: "/home/user/datasets/ovules/train/raw"
+    GT_PATH: "/home/user/datasets/ovules/train/boundaries"
+  VAL:
+    PATH: "/home/user/datasets/ovules/val/raw"
+    GT_PATH: "/home/user/datasets/ovules/val/boundaries"
+  TEST:
+    PATH: "/home/user/datasets/ovules/test/raw"
+    GT_PATH: "/home/user/datasets/ovules/test/boundaries"
+```
+
+### BMZ model export metadata
+Fill in the metadata for exporting your trained model to the BioImage Model Zoo.
+Edit the fields under ``MODEL.BMZ.EXPORT``, such as model name (``MODEL.BMZ.EXPORT.MODEL_NAME``), description (``MODEL.BMZ.EXPORT.DESCRIPTION``), authors (``MODEL.BMZ.EXPORT.AUTHORS``), citations (``MODEL.BMZ.EXPORT.CITE``) etc.
+
+## Step 3: Run BiaPy Training
+
+Once the configuration file is updated, you can launch training by running the following commands.  
+Here we define a few variables for readability before calling BiaPy:
+
+```bash
+# Path to the configuration file you edited in Step 2
+job_cfg_file=/home/user/ovules.yaml
+
+# Directory where the experiment results will be saved
+result_dir=/home/user/exp_results
+
+# A descriptive name for the job (used to organize outputs)
+job_name=ovules
+
+# Counter number for reproducibility; 
+# increase this if you want to rerun the same job multiple times
+job_counter=1
+
+# GPU ID to use (check with 'nvidia-smi'); set to -1 to run on CPU
+gpu_number=0
+
+# Activate your BiaPy environment
+conda activate BiaPy_env
+
+# Launch BiaPy training
+biapy \
+    --config $job_cfg_file \
+    --result_dir $result_dir \
+    --name $job_name \
+    --run_id $job_counter \
+    --gpu "$gpu_number"
+```
+
+## Step 4: Inspect Results
+
+After training and inference, BiaPy will create output folders inside ``./results/``, including:
+
+* **results/per_image/** → raw predicted segmentation masks
+
+* **results/per_image_binarized/** → binarized boundary predictions (using Otsu)
+
+👉 Example output of the test image ``N_590_final_crop_ds2_label.tif`` (slice 62):
+
+<p align="center">
+  <figure style="display:inline-block; text-align:center; margin:10px;">
+    <img src="images/biapy/N_590_final_crop_ds2_label_slice62_raw.png" alt="Raw input" width="250"/>
+    <figcaption>Raw input</figcaption>`
+  </figure>
+  <figure style="display:inline-block; text-align:center; margin:10px;">
+    <img src="images/biapy/N_590_final_crop_ds2_label_slice62_GT.png" alt="Ground truth boundaries" width="250"/>
+    <figcaption>Ground truth boundaries</figcaption>
+  </figure>
+  <figure style="display:inline-block; text-align:center; margin:10px;">
+    <img src="images/biapy/N_590_final_crop_ds2_label_slice62_prediction.png" alt="Model prediction (binarized)" width="250"/>
+    <figcaption>Model prediction (binarized)</figcaption>
+  </figure>
+</p>
+
+## Step 5: Export the Model
+
+If you configured the ``MODEL.BMZ.EXPORT`` section, the model will automatically be exported into BMZ format at the end of training. The exported `.zip` file will be saved in your results directory, under a path similar to: ``./results/ovules1_1/BMZ_files/``. This package is immediately ready for sharing or submission to the [BioImage Model Zoo](https://bioimage.io/).  
+
+For reference, we have already exported and published the model from this tutorial: you can explore it on the BioImage Model Zoo under the name [**dazzling-blowfish**](https://bioimage.io/#/artifacts/dazzling-blowfish).  
+
+---
 
 ## Application in ilastik
 
@@ -39,6 +170,15 @@ The fine-tuning significantly increses the model's performance for the leaf data
 
 <img src="https://raw.githubusercontent.com/bioimage-io/use-cases/main/case2-finetuning/images/comparison.png" alt="drawing" width="800"/>
 
+## Retraining in ZeroCost (option A) or BiaPy (option B)
+
+### Option A) ZeroCost
+
+TODO: describe retraining in zerocost (@esgomezm)
+
+### Option B) BiaPy
+
+TODO:
 
 ## Application in deepimageJ
 
