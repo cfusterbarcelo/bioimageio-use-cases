@@ -24,7 +24,7 @@ def run_stardist(image, scale=2):
 
 
 def main():
-    input_path = "/home/pape/Work/data/lizard/train_images/consep_13.png"
+    input_path = "consep_13.png"
     image = imageio.imread(input_path)
     nuclei = run_stardist(image)
 

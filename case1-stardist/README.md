@@ -3,23 +3,28 @@
 In this use-case, we apply the [Stardist H&E](https://bioimage.io/#/?tags=stardist&id=10.5281%2Fzenodo.6338614) model from the BioImage Model Zoo which was pretrained on [MoNuSeg](https://monuseg.grand-challenge.org/Data/) and [TNBC](https://zenodo.org/record/1175282#.X6mwG9so-CN) datasets.
 This model is applied to the [Lizard dataset](https://www.kaggle.com/datasets/aadimator/lizard-dataset) in [deepImageJ](https://deepimagej.github.io), in [QuPath](https://qupath.github.io), in [ZeroCostDL4Mic](https://github.com/HenriquesLab/ZeroCostDL4Mic/wiki) and with a Python notebook.
 
-## Apply stardist model in QuPath and correct segmentation
+## Apply StarDist model in QuPath and correct segmentation
 
-We apply the pretrained model in QuPath, that has advanced image annotation capabilities. This allows correction of the stardist segmentation, for example for a more correct analysis of the result, or for training of a better model.
+We apply the pretrained model in QuPath, that has advanced image annotation capabilities.
+This allows correction of the StarDist segmentation, for example for a more correct analysis of the result, or for training of a better model.
 
 Step-by-step:
-- Download the stardist model with `download_stardist_model.py`
-- Run `prepare_data_for_qupath.py` to select the data for QuPath
+- Download the StarDist H&E model from: https://bioimage.io/#/artifacts/chatty-frog  
+  Be sure to extract the downloaded zip, and also extract the TF_SavedModel folder inside the extracted folder.
+- Download the images from https://www.kaggle.com/datasets/aadimator/lizard-dataset
+  You can download the entire dataset (~800MB) or just a few images.
 - Prepare QuPath for running StarDist:
-  - install the StarDist extension: https://qupath.readthedocs.io/en/stable/docs/advanced/stardist.html#getting-the-stardist-extension
-  - install the tensorflow extension: https://qupath.readthedocs.io/en/stable/docs/advanced/stardist.html#use-tensorflow
-- Apply stardist to the lizard images with the `apply_stardist_qupath.groovy` script using the [QuPath scripting functionality](https://qupath.readthedocs.io/en/stable/docs/scripting/workflows_to_scripts.html#running-a-script-for-a-single-image). 
-  - To run it adapt the path to the model in the script here: https://github.com/bioimage-io/use-cases/blob/main/case2/apply_stardist_qupath.groovy#L27
-- Correct the predictions using the qupath annotation functionality (check out [these tweets](https://twitter.com/petebankhead/status/1295965136646176768) for a short overview of this functionality)
-- Export the label image using the `export_labels_qupath.groovy` script.
-  - Important: Remove the rectangular annotation that the stardist plugin creates around the whole image before exporting the labels, otherwise the export script will not work correctly.
+  - install the StarDist extension: https://qupath.readthedocs.io/en/0.6/docs/intro/extensions.html#extensions
+  - install TensorFlow (and possibly CUDA): https://qupath.readthedocs.io/en/0.6/docs/deep/djl.html
+- Create a project by dragging an empty folder onto QuPath: https://qupath.readthedocs.io/en/0.6/docs/tutorials/projects.html
+- Add the lizard images to the project by drag & drop: https://qupath.readthedocs.io/en/0.6/docs/tutorials/projects.html#add-images
+- Apply StarDist to the lizard images with the `QuPath_Run_StarDist.groovy` script using [QuPath's scripting functionality](https://qupath.readthedocs.io/en/0.6/docs/scripting/workflows_to_scripts.html#running-a-script-for-multiple-images). 
+  - Either copy the `chatty-frog` folder to be inside the QuPath project, or update the model path defined in the script: https://github.com/bioimage-io/use-cases/blob/main/case1-stardist/QuPath_Run_StarDist.groovy
+- Correct the predictions using QuPath's annotation tools (check out [these tweets](https://twitter.com/petebankhead/status/1295965136646176768) for a short overview)
+- Export the label image using the `QuPath_Export_Labels.groovy` script.
 
-See a short video demonstrating the label correction in qu-path:
+
+See a short video demonstrating the label correction in QuPath:
 
 https://user-images.githubusercontent.com/4263537/160414686-10ae46ae-5903-4a67-a35b-1f043b68711d.mp4
 
@@ -30,7 +35,7 @@ And images of application in QuPath:
 
 ### Dependencies
 
-- qupath 0.3.2
+- QuPath 0.6.0
 
 ## Apply the model in deepImageJ
 
@@ -40,7 +45,7 @@ And images of application in QuPath:
     - Select the model "StarDist H&E Nuclei Segmentation" from the drop down menu and click on Install. 
     - Adjust the Probability Threshold to a 0,40. You can try different thresholds depending on the number of objects that you want to detect.  
     - Apply the model by clicking `Run`.
-    - This will result in the stardist predictions. You can change the lookup table for a better visualization of the segmented nuclei.
+    - This will result in the StarDist predictions. You can change the lookup table for a better visualization of the segmented nuclei.
 
 See a screenshot of the deepImageJ StarDist interface:
 <img src="https://github.com/bioimage-io/use-cases/blob/main/case1-stardist/images/deepimagej-stardist-interface.png" alt="drawing" width="1200"/>
@@ -54,7 +59,7 @@ The example was run using:
 - DeepImageJ 3.1.0
 
 
-## Apply the model in stardist python
+## Apply the model in StarDist python
 
 - `run_stardist_python.py`
 
